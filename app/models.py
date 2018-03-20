@@ -44,7 +44,7 @@ class User(db.Model):
         except Exception as e:
             return str(e)
 
-    def destroy_token(self, user_id):
+    def destroy_token(self):
         return ""
 
     @staticmethod

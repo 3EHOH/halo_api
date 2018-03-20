@@ -132,9 +132,8 @@
         },
 
         handleClick: function() {
-            console.log("CLICK", this.state.user_name);
 
-            const auth_info = fetch('auth/register', {
+            fetch('auth/register', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

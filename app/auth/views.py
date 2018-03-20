@@ -78,32 +78,6 @@ class LogoutView(MethodView):
         return make_response(jsonify(response)), 200
 
 
-        # return make_response(jsonify(response)), 200
-        # try:
-        #     user = User.query.filter_by(name=request.data['name']).first()
-        #
-        #     if user and user.password_is_valid(request.data['password']):
-        #         access_token = user.destroy_token(user.id)
-        #
-        #         # if access_token:
-        #         response = {
-        #             'message': 'You logged in successfully.',
-        #             'access_token': access_token
-        #         }
-        #         return make_response(jsonify(response)), 200
-        #     else:
-        #         response = {
-        #             'message': 'Invalid name or password, Please try again.'
-        #         }
-        #         return make_response(jsonify(response)), 401
-        #
-        # except Exception as e:
-        #     response = {
-        #         'message': str(e)
-        #     }
-        # return make_response(jsonify(response)), 500
-
-
 registration_view = RegistrationView.as_view('registration_view')
 login_view = LoginView.as_view('login_view')
 logout_view = LogoutView.as_view('logout_view')
