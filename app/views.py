@@ -53,7 +53,7 @@ def keyvaluepairs():
             }
             return make_response(jsonify(response)), 401
 
-@getter_setter_app.route('/keyvaluepairs/<string:key_name>', methods=['GET', 'PUT'])
+@getter_setter_app.route('/keyvaluepairs/<string:key_name>', methods=['GET'])
 def keyvalue_manipulation(key_name, **kwargs):
 
     auth_header = request.headers.get('Authorization')
