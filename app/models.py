@@ -9,7 +9,7 @@ class User(db.Model):
 
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
     name = db.Column(db.String(256), primary_key=True, nullable=False, unique=True)
     password = db.Column(db.String(256), nullable=False)
     keyvaluepairs = db.relationship(
@@ -44,7 +44,8 @@ class User(db.Model):
         except Exception as e:
             return str(e)
 
-    def destroy_token(self):
+    @staticmethod
+    def destroy_token():
         return ""
 
     @staticmethod
@@ -62,7 +63,7 @@ class KeyValuePair(db.Model):
 
     __tablename__ = 'keyvaluepairs'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
     key_name = db.Column(db.String(255), unique=True, nullable=False)
     value_name = db.Column(db.String(255), nullable=False)
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
