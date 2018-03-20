@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Halo API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<div class="container">
+    <h1>Halo API</h1>
+    <br>
+    <div id="content">
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react-dom.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
+
+<script type="text/jsx">
+    /*** @jsx React.DOM */
+        
+    let user_access_token = '';
+
+    const KVGetter = React.createClass({
+
+        getInitialState: function(){
+            return { resource_string: '', key_value_pair: '' };
+        },
+
+        handleChange: function(e) {
+            this.setState({ resource_string: e.target.value });
+        },
+
+        handleClick: function() {
+
+            const resource_string = this.state.resource_string;
+
+            fetch('keyvaluepairs/' + resource_string, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + user_access_token
+                    }
+            })
+                .then(response => response.json())
+                .then(data => {
+
+                    this.setState(
+                        { key_value_pair: data }
+                    );
+                });
+        },
+
+        render: function() {
+
+            const kv_pair = { "key_name": this.state.key_value_pair.key_name, "value_name": this.state.key_value_pair.value_name };
+
+            return (
+                <div>
+                    <input type="text" value={this.state.resource_string} onChange={this.handleChange} placeholder="Get KV Pairs" />
+                    <input
+                        type="button"
+                        value="Get KV Pairs"
+                        onClick={this.handleClick}
+                    />
+                    <ul>
+                        key name: { kv_pair.key_name }, value name: { kv_pair.value_name }
+                    </ul>
+                </div>
+            )
+        }
+    });
+
+
+
+    const KVSetter = React.createClass({
+
+        getInitialState: function(){
+            return { key_name: '', value_name: '' };
+        },
+
+        handleChange: function(e) {
+
+            this.setState({[e.target.name]: e.target.value});
+
+        },
+
+        handleClick: function() {
+
+            fetch('keyvaluepairs/', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + user_access_token
+                },
+                body: JSON.stringify({
+                    key_name: this.state.key_name,
+                    value_name: this.state.value_name,
+                })
+            })
+        },
+
+        render: function() {
+
+            return (
+                <div>
+                    <input type="text" value={this.state.keySetter} name="key_name" onChange={this.handleChange} placeholder="Set Key" />
+                    <input type="text" value={this.state.valueSetter} name="value_name" onChange={this.handleChange} placeholder="Set Value" />
+                    <input
+                        type="button"
+                        value="Set KV Pair"
+                        onClick={this.handleClick}
+                    />
+                </div>
+            )
+        }
+    });
+
+    const RegisterUser = React.createClass({
+
+        getInitialState: function(){
+            return { user_name: '', password: '' };
+        },
+
+        handleChange: function(e) {
+
+            this.setState({[e.target.name]: e.target.value});
+        },
+
+        handleClick: function() {
+            console.log("CLICK", this.state.user_name);
+
+            const auth_info = fetch('auth/register', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: this.state.user_name,
+                    password: this.state.password
+                })
+            });
+
+        },
+
+        render: function() {
+
+            return (
+                <div>
+                    <input type="text" value={this.state.user_name} name="user_name" onChange={this.handleChange} placeholder="username" />
+                    <input type="text" value={this.state.password} name="password" onChange={this.handleChange} placeholder="password" />
+                    <input
+                        type="button"
+                        value="Register"
+                        onClick={this.handleClick}
+                    />
+                </div>
+            )
+        }
+    });
+
+    const LoginUser = React.createClass({
+
+        getInitialState: function(){
+            return { user_name: '', password: '' };
+        },
+
+        handleChange: function(e) {
+
+            this.setState({[e.target.name]: e.target.value});
+
+        },
+
+        handleClick: function() {
+
+            fetch('auth/login', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: this.state.user_name,
+                    password: this.state.password
+                })
+            }).then(function(response) {
+                response.json().then(function(data) {
+                    user_access_token = data.access_token;
+                });
+            });
+
+        },
+
+        render: function() {
+
+            return (
+                <div>
+                    <input type="text" value={this.state.user_name} name="user_name" onChange={this.handleChange} placeholder="username" />
+                    <input type="text" value={this.state.password} name="password" onChange={this.handleChange} placeholder="password" />
+                    <input
+                        type="button"
+                        value="Login"
+                        onClick={this.handleClick}
+                    />
+                </div>
+            )
+        }
+    });
+
+    const LogoutUser = React.createClass({
+
+        handleClick: function() {
+
+           fetch('auth/logout', {
+                method: 'POST'
+            })
+                .then(function(response) {
+                response.json().then(function(data) {
+                    user_access_token = data.access_token;
+                });
+            });
+
+        },
+
+        render: function() {
+
+            return (
+                <input
+                    type="button"
+                    value="Logout"
+                    onClick={this.handleClick}
+                />
+            )
+        }
+    });
+
+
+    ReactDOM.render(
+        <div>
+            <RegisterUser />
+            <LoginUser />
+
+            <KVSetter />
+            <KVGetter />
+
+            <br />
+            <LogoutUser />
+
+        </div>,
+        document.getElementById('content')
+    );
+
+
+</script>
+</body>
+</html>
